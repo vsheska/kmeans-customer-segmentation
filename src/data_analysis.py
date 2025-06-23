@@ -1,7 +1,8 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import colormaps
 import seaborn as sns
-import os
 from clustering import find_optimal_k, perform_kmeans, predict_clusters, plot_elbow_curve
 from utils import save_plot
 
@@ -93,6 +94,34 @@ def display_cluster_info(df, labels):
         print(f"  Annual Income: ${cluster_means.loc[cluster, 'annual_income']:.1f}k")
         print(f"  Spending Score: {cluster_means.loc[cluster, 'spending_score']:.1f}/100")
 
+def plot_clusters(df, labels, x_col='annual_income', y_col='spending_score',):
+
+    plt.figure(figsize=(10, 8))
+
+    unique_clusters = sorted(set(labels))
+
+    colormap = colormaps['tab10']
+    colors = colormap(np.linspace(0, 1, len(unique_clusters)))
+
+    for cluster_id, color in zip(unique_clusters, colors):
+        mask = labels == cluster_id
+        plt.scatter(df[x_col][mask],
+                    df[y_col][mask],
+                    c=[color],
+                    label=f'Cluster {cluster_id}',
+                    alpha=0.6,
+                    s=100)
+
+    plt.title('Customer Segments', fontsize=14)
+    plt.xlabel('Annual Income (k$)', fontsize=12)
+    plt.ylabel('Spending Score (1-100)', fontsize=12)
+
+    plt.legend(loc='upper left')
+
+    plt.grid(True, linestyle='--', alpha=0.7)
+
+    save_plot(plt, f'cluster_scatter_{x_col}_{y_col}.png')
+
 
 def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Read the data
@@ -145,6 +174,8 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Display clustering results
     display_cluster_info(df, labels)
 
+    plot_clusters(df, labels, x_col='annual_income', y_col='spending_score')
+    plot_clusters(df, labels, x_col='age', y_col='spending_score')
     return df
 
 if __name__ == "__main__":
