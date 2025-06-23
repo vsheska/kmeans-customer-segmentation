@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+from clustering import perform_kmeans, predict_clusters
 
 # Create plots directory if it doesn't exist
 plots_dir = os.path.join('..', 'plots')
@@ -77,6 +78,30 @@ def plot_distributions(df):
     plt.tight_layout()
     save_plot(plt, 'age_income_distributions.png')
 
+def display_cluster_info(df, labels):
+    # Add cluster labels to the dataframe
+    df['cluster'] = labels
+
+    # Print cluster summary
+    print("\n=== Cluster Analysis ===")
+    print(f"Number of clusters: {len(set(labels))}")
+    print("\nCluster Sizes:")
+    cluster_sizes = df['cluster'].value_counts().sort_index()
+    for cluster, size in cluster_sizes.items():
+        print(f"Cluster {cluster}: {size} customers ({size / len(df) * 100:.1f}%)")
+
+    # Calculate and print cluster characteristics
+    print("\nCluster Characteristics (Mean Values):")
+    cluster_means = df.groupby('cluster')[['age', 'annual_income', 'spending_score']].mean()
+
+    # Format and display the characteristics
+    for cluster in cluster_means.index:
+        print(f"\nCluster {cluster}:")
+        print(f"  Age: {cluster_means.loc[cluster, 'age']:.1f}")
+        print(f"  Annual Income: ${cluster_means.loc[cluster, 'annual_income']:.1f}k")
+        print(f"  Spending Score: {cluster_means.loc[cluster, 'spending_score']:.1f}/100")
+
+
 def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Read the data
     df = pd.read_csv(csv_path, header=0,
@@ -111,6 +136,9 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     plot_gender_pie(df)
     plot_distributions(df)
 
+    kmeans_model = perform_kmeans(df, numerical_cols)
+    labels = predict_clusters(df, kmeans_model, numerical_cols)
+    display_cluster_info(df, labels)
     return df
 
 if __name__ == "__main__":
