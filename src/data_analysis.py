@@ -15,7 +15,7 @@ def save_plot(plt, filename):
 
 def plot_gender_averages(df):
     # Calculate means for each gender
-    gender_means = df.groupby('Gender')[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].mean()
+    gender_means = df.groupby('gender')[['age', 'annual_income', 'spending_score']].mean()
 
     # Create the bar plot
     plt.figure(figsize=(10, 6))
@@ -44,7 +44,7 @@ def plot_gender_averages(df):
 
 def plot_gender_pie(df):
     # Calculate gender distribution
-    gender_counts = df['Gender'].value_counts()
+    gender_counts = df['gender'].value_counts()
 
     # Create pie chart
     plt.figure(figsize=(8, 8))
@@ -62,13 +62,13 @@ def plot_distributions(df):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
 
     # Age distribution
-    ax1.hist(df['Age'], bins=10, edgecolor='black', color='tab:blue')
+    ax1.hist(df['age'], bins=10, edgecolor='black', color='tab:blue')
     ax1.set_title('Age Distribution')
     ax1.set_xlabel('Age')
     ax1.set_ylabel('Frequency')
 
     # Annual Income distribution
-    ax2.hist(df['Annual Income (k$)'], bins=10, edgecolor='black', color='tab:orange')
+    ax2.hist(df['annual_income'], bins=10, edgecolor='black', color='tab:orange')
     ax2.set_title('Annual Income Distribution')
     ax2.set_xlabel('Annual Income (k$)')
     ax2.set_ylabel('Frequency')
@@ -79,7 +79,9 @@ def plot_distributions(df):
 
 def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Read the data
-    df = pd.read_csv(csv_path)
+    df = pd.read_csv(csv_path, header=0,
+                     names=['id', 'gender', 'age', 'annual_income', 'spending_score'],
+                     index_col='id')
 
     # Basic summary statistics
     print("\n=== Basic Summary Statistics ===")
@@ -91,10 +93,10 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
 
     # Distribution of categorical variables
     print("\n=== Gender Distribution ===")
-    print(df['Gender'].value_counts())
+    print(df['gender'].value_counts())
 
     # Correlation matrix for numerical columns
-    numerical_cols = ['Age', 'Annual Income (k$)', 'Spending Score (1-100)']
+    numerical_cols = ['age', 'annual_income', 'spending_score']
     correlation = df[numerical_cols].corr()
     print("\n=== Correlation Matrix ===")
     print(correlation)
