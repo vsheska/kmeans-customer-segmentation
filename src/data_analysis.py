@@ -1,8 +1,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
-def load_and_analyze_data(csv_path='../data/Mall_Customers.csv' ):
+# Create plots directory if it doesn't exist
+plots_dir = os.path.join('..', 'plots')
+os.makedirs(plots_dir, exist_ok=True)
+
+def save_plot(plt, filename):
+    """Save a matplotlib plot to the plots directory."""
+    plt.savefig(os.path.join(plots_dir, filename))
+    plt.close()
+
+def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Read the data
     df = pd.read_csv(csv_path)
 
@@ -26,11 +36,11 @@ def load_and_analyze_data(csv_path='../data/Mall_Customers.csv' ):
 
     # Create correlation heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(correlation, annot=True, cmap='coolwarm', center=0)
+    sns.heatmap(df[numerical_cols].corr(), annot=True, cmap='coolwarm', center=0)
     plt.title('Correlation Heatmap')
-    plt.show()
+    save_plot(plt, 'correlation_heatmap.png')
 
     return df
 
 if __name__ == "__main__":
-    df = load_and_analyze_data()
+    df = analyze_data()
