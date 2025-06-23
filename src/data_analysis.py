@@ -2,16 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from clustering import perform_kmeans, predict_clusters
-
-# Create plots directory if it doesn't exist
-plots_dir = os.path.join('..', 'plots')
-os.makedirs(plots_dir, exist_ok=True)
-
-def save_plot(plt, filename):
-    """Save a matplotlib plot to the plots directory."""
-    plt.savefig(os.path.join(plots_dir, filename))
-    plt.close()
+from clustering import find_optimal_k, perform_kmeans, predict_clusters
+from utils import save_plot
 
 
 def plot_gender_averages(df):
@@ -136,9 +128,20 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     plot_gender_pie(df)
     plot_distributions(df)
 
-    kmeans_model = perform_kmeans(df, numerical_cols)
-    labels = predict_clusters(df, kmeans_model, numerical_cols)
+    k_range = range(1, 11)
+    inertias = find_optimal_k(df, numerical_cols, k_range)
+
+    print("\n=== Elbow Method Results ===")
+    for k, inertia in zip(k_range, inertias):
+        print(f"k={k}: inertia={inertia:.2f}")
+
+    optimal_k = 5  # Based on data from the elbow curve
+    pipeline, inertia = perform_kmeans(df, numerical_cols, n_clusters=optimal_k)
+    labels = predict_clusters(df, pipeline)
+
+    # Display clustering results
     display_cluster_info(df, labels)
+
     return df
 
 if __name__ == "__main__":
