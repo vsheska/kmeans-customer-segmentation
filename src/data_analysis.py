@@ -42,6 +42,21 @@ def plot_gender_averages(df):
     plt.tight_layout()
     save_plot(plt, 'gender_averages.png')
 
+def plot_gender_pie(df):
+    # Calculate gender distribution
+    gender_counts = df['Gender'].value_counts()
+
+    # Create pie chart
+    plt.figure(figsize=(8, 8))
+    plt.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%',
+            colors=['tab:blue', 'tab:orange'], startangle=90)
+
+    # Add title
+    plt.title('Gender Distribution')
+
+    # Save plot
+    save_plot(plt, 'gender_pie.png')
+
 
 def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Read the data
@@ -72,6 +87,7 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     save_plot(plt, 'correlation_heatmap.png')
 
     plot_gender_averages(df)
+    plot_gender_pie(df)
 
 
     return df
