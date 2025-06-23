@@ -57,6 +57,25 @@ def plot_gender_pie(df):
     # Save plot
     save_plot(plt, 'gender_pie.png')
 
+def plot_distributions(df):
+    # Create a figure with two subplots side by side
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
+
+    # Age distribution
+    ax1.hist(df['Age'], bins=10, edgecolor='black', color='tab:blue')
+    ax1.set_title('Age Distribution')
+    ax1.set_xlabel('Age')
+    ax1.set_ylabel('Frequency')
+
+    # Annual Income distribution
+    ax2.hist(df['Annual Income (k$)'], bins=10, edgecolor='black', color='tab:orange')
+    ax2.set_title('Annual Income Distribution')
+    ax2.set_xlabel('Annual Income (k$)')
+    ax2.set_ylabel('Frequency')
+
+    # Adjust layout and save
+    plt.tight_layout()
+    save_plot(plt, 'age_income_distributions.png')
 
 def analyze_data(csv_path='../data/Mall_Customers.csv' ):
     # Read the data
@@ -88,7 +107,7 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
 
     plot_gender_averages(df)
     plot_gender_pie(df)
-
+    plot_distributions(df)
 
     return df
 
