@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from clustering import find_optimal_k, perform_kmeans, predict_clusters
+from clustering import find_optimal_k, perform_kmeans, predict_clusters, plot_elbow_curve
 from utils import save_plot
 
 
@@ -130,6 +130,9 @@ def analyze_data(csv_path='../data/Mall_Customers.csv' ):
 
     k_range = range(1, 11)
     inertias = find_optimal_k(df, numerical_cols, k_range)
+
+    # Plot elbow curve
+    plot_elbow_curve(k_range, inertias)
 
     print("\n=== Elbow Method Results ===")
     for k, inertia in zip(k_range, inertias):
